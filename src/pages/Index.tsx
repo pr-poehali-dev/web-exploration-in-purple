@@ -7,10 +7,32 @@ import Icon from '@/components/ui/icon';
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [isVisible, setIsVisible] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
+    // Проверяем сохраненную тему или системные настройки
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    }
   }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    
+    if (newTheme) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -101,28 +123,43 @@ gsap.from('.card', {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 dark:from-slate-900 dark:to-slate-800 transition-colors duration-500">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-purple-100">
+      <nav className="fixed top-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-50 border-b border-purple-100 dark:border-slate-700 transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              WebTech
+              AlfTech
             </div>
             <div className="hidden md:flex space-x-8">
               {['Главная', 'HTML', 'CSS', 'JavaScript', 'Примеры'].map((item, index) => (
                 <button
                   key={item}
                   onClick={() => scrollToSection(['home', 'html', 'css', 'javascript', 'examples'][index])}
-                  className="text-slate-600 hover:text-purple-600 transition-colors relative group"
+                  className="text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors relative group"
                 >
                   {item}
                   <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-purple-600 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
                 </button>
               ))}
             </div>
-            <div className="md:hidden">
-              <Icon name="Menu" size={24} className="text-slate-600" />
+            <div className="flex items-center space-x-4">
+              {/* Theme Toggle Button */}
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full bg-purple-100 dark:bg-slate-700 hover:bg-purple-200 dark:hover:bg-slate-600 transition-all duration-300 hover:scale-110"
+                aria-label="Переключить тему"
+              >
+                <Icon 
+                  name={isDarkMode ? 'Sun' : 'Moon'} 
+                  size={20} 
+                  className="text-purple-600 dark:text-purple-400 transition-all duration-300" 
+                />
+              </button>
+              
+              <div className="md:hidden">
+                <Icon name="Menu" size={24} className="text-slate-600 dark:text-slate-300" />
+              </div>
             </div>
           </div>
         </div>
@@ -141,7 +178,7 @@ gsap.from('.card', {
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-blue-600 to-purple-600 bg-clip-text text-transparent animate-slide-up">
             Веб-технологии
           </h1>
-          <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl mx-auto animate-slide-up">
+          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-8 max-w-3xl mx-auto animate-slide-up">
             Изучите основы современной веб-разработки: HTML, CSS и JavaScript. 
             Создавайте интерактивные и красивые веб-приложения.
           </p>
@@ -297,7 +334,7 @@ gsap.from('.card', {
       <footer className="bg-slate-900 text-white py-12 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <div className="mb-6">
-            <h3 className="text-2xl font-bold mb-2">WebTech</h3>
+            <h3 className="text-2xl font-bold mb-2">AlfTech</h3>
             <p className="text-slate-400">
               Изучайте веб-технологии с удовольствием
             </p>
@@ -308,7 +345,7 @@ gsap.from('.card', {
             <Icon name="Mail" size={24} className="text-slate-400 hover:text-white cursor-pointer transition-colors" />
           </div>
           <p className="text-slate-500">
-            © 2024 WebTech. Все права защищены.
+            © 2024 AlfTech. Все права защищены.
           </p>
         </div>
       </footer>
